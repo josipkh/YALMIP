@@ -55,7 +55,7 @@ jobs:
           octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/misc');"
 
       - name: Test Report
-        uses: dorny/test-reporter@v1.4.3
+        uses: dorny/test-reporter@v
         if: success() || failure()
         with:
           name: Report (basics)
@@ -125,7 +125,7 @@ jobs:
           octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/moment');"
 
       - name: Test Report
-        uses: dorny/test-reporter@v1.4.3
+        uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
           name: Report (modules)
@@ -191,7 +191,7 @@ jobs:
           octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/slayer');"
                                     
       - name: Test Report
-        uses: dorny/test-reporter@v1.4.3
+        uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
           name: Report (solvers)
