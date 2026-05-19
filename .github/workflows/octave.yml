@@ -34,7 +34,7 @@ jobs:
       - name: Install GNU Octave
         run: |
           sudo apt-get update
-          sudo apt-get install -y octave octave-dev
+          sudo apt-get install -y octave octave-dev libopenblas-dev
 
       - name: Build SeDuMi
         run: |
@@ -88,7 +88,7 @@ jobs:
       - name: Install GNU Octave
         run: |
           sudo apt-get update
-          sudo apt-get install -y octave octave-dev
+          sudo apt-get install -y octave octave-dev libopenblas-dev
 
       - name: Build SeDuMi
         run: |
@@ -159,7 +159,7 @@ jobs:
       - name: Install GNU Octave
         run: |
           sudo apt-get update
-          sudo apt-get install -y octave octave-dev
+          sudo apt-get install -y octave octave-dev libopenblas-dev
 
       - name: Build SeDuMi
         run: |
