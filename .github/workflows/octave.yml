@@ -1,0 +1,200 @@
+name: Complete integration test (Octave)
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  job1:
+    name: Complete integration (basics)
+    runs-on: ubuntu-latest
+    
+    permissions:
+      checks: write
+      contents: write
+      pull-requests: write
+      statuses: write      
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Upgraded checkouts to v4 for modern Node.js support in runners
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: sqlp/sedumi
+          path: sedumi
+          
+      - name: Confirm
+        run: ls -l
+            
+      - name: Install GNU Octave
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y octave liboctave-dev
+
+      - name: Build SeDuMi
+        run: |
+          octave --eval "cd('sedumi'); install_sedumi -rebuild;"
+          
+      - name: Test core
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/core');"
+
+      - name: Test operators
+        if: success() || failure() 
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/operators');"
+          
+      - name: Test misc
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/misc');"
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1.4.3
+        if: success() || failure()
+        with:
+          name: Report (basics)
+          path: '*.xml'
+          reporter: java-junit
+          fail-on-error: 'false'             
+
+  job2:
+    name: Complete integration (modules)    
+    runs-on: ubuntu-latest
+    
+    permissions:
+      checks: write
+      contents: write
+      pull-requests: write
+      statuses: write 
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: sqlp/sedumi
+          path: sedumi
+          
+      - name: Confirm
+        run: ls -l
+            
+      - name: Install GNU Octave
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y octave liboctave-dev
+
+      - name: Build SeDuMi
+        run: |
+          octave --eval "cd('sedumi'); install_sedumi -rebuild;"          
+              
+      - name: Test optimizer module
+        if: success() || failure() 
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/optimizer');"   
+
+      - name: Test robust optimization module
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/robust');"                 
+                
+      - name: Test dualize
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/dualize');"
+
+      - name: Test geometric programming layer
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/geometric');"
+
+      - name: Test sum-of-squares module
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/sos');"
+
+      - name: Test moment relaxations module
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/moment');"
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1.4.3
+        if: success() || failure()
+        with:
+          name: Report (modules)
+          path: '*.xml'
+          reporter: java-junit
+          fail-on-error: 'false'             
+
+
+  job3:
+    name: Complete integration (solvers)   
+    runs-on: ubuntu-latest
+        
+    permissions:
+      checks: write
+      contents: write
+      pull-requests: write
+      statuses: write 
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: sqlp/sedumi
+          path: sedumi
+          
+      - name: Confirm
+        run: ls -l
+            
+      - name: Install GNU Octave
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y octave liboctave-dev
+
+      - name: Build SeDuMi
+        run: |
+          octave --eval "cd('sedumi'); install_sedumi -rebuild;"          
+              
+      - name: Test BNB solver
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/bnb');"
+
+      - name: Test BMIBNB solver
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/bmibnb');"
+
+      - name: Test BILEVEL solver
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/bilevel');"
+            
+      - name: Test CUTSDP solver
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/cutsdp');"
+
+      - name: Test SLAYER solver
+        if: success() || failure()       
+        run: |
+          octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/slayer');"
+                                    
+      - name: Test Report
+        uses: dorny/test-reporter@v1.4.3
+        if: success() || failure()
+        with:
+          name: Report (solvers)
+          path: '*.xml'
+          reporter: java-junit
+          fail-on-error: 'false'
