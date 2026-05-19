@@ -55,7 +55,7 @@ jobs:
           octave --eval "addpath(genpath(pwd)); warning('off'); results = runxunittests('dev/tests/misc');"
 
       - name: Test Report
-        uses: dorny/test-reporter@v
+        uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
           name: Report (basics)
